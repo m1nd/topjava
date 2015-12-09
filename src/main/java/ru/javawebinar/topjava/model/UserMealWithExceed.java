@@ -22,6 +22,10 @@ public class UserMealWithExceed {
         this.exceed = exceed;
     }
 
+    public boolean isExceed() {
+        return exceed;
+    }
+
     @Override
     public String toString() {
         return "UserMealWithExceed{" +
