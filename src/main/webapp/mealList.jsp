@@ -6,16 +6,39 @@
 </head>
 <body>
 <h2>Meal list</h2>
-<c:forEach var="num" items="${mealList}">
-    <tr>
-        <c:choose>
-            <c:when test="${num.isExceed()}"><span style="color: red; "/></c:when>
-            <c:otherwise><span style="color: black; "/></c:otherwise>
-        </c:choose>
 
-        <p>${num}</p>
-    </tr>
-</c:forEach>
+<table border="1" >
+
+    <caption>Список еды</caption>
+
+    <c:forEach var="num" items="${mealList}">
+                <c:choose>
+
+                    <c:when test="${num.isExceed()}">
+
+                        <tr style="color: red; ">
+                            <td>${num.getDateTime()}</td>
+                            <td>${num.getDescription()}</td>
+                            <td>${num.getCalories()}</td>
+                        </tr>
+
+                    </c:when>
+
+                    <c:otherwise>
+
+                        <tr style="color: black; ">
+                            <td>${num.getDateTime()}</td>
+                            <td>${num.getDescription()}</td>
+                            <td>${num.getCalories()}</td>
+                        </tr>
+
+                    </c:otherwise>
+
+
+                </c:choose>
+    </c:forEach>
+
+</table>
 
 </body>
 </html>
