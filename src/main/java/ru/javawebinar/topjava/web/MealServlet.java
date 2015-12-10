@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web;
 
+import ru.javawebinar.topjava.LoggerWrapper;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.model.UserMealWithExceed;
 import ru.javawebinar.topjava.util.UserMealsUtil;
@@ -17,9 +18,12 @@ import java.util.List;
 
 public class MealServlet extends HttpServlet {
 
+    private static final LoggerWrapper LOG = LoggerWrapper.get(MealServlet.class);
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //super.doGet(req, resp);
+
         List<UserMeal> mealList = Arrays.asList(
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
@@ -33,6 +37,7 @@ public class MealServlet extends HttpServlet {
 
         List<UserMealWithExceed> list = UserMealsUtil.getFilteredMealsWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         req.setAttribute("mealList", list);
+        LOG.debug("redirect to mealList");
         req.getRequestDispatcher("/mealList.jsp").forward(req, resp);
     }
 
