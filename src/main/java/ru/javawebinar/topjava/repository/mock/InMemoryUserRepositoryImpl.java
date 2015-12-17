@@ -1,14 +1,15 @@
 package ru.javawebinar.topjava.repository.mock;
 
 import org.springframework.stereotype.Repository;
-import ru.javawebinar.topjava.LoggerWrapper;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -18,55 +19,46 @@ import java.util.stream.Collectors;
  */
 @Repository
 public class InMemoryUserRepositoryImpl implements UserRepository {
-    private static final LoggerWrapper LOG = LoggerWrapper.get(InMemoryUserRepositoryImpl.class);
-
-    private List<User> repository = Arrays.asList();
+    private Map<Integer, User> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
-    public static final List<User> USER_LIST = Arrays.asList(
-            new User(),
-            new User(),
-            new User()
-    );
+    public static final Comparator<User> USER_COMPARATOR = (u1, u2) -> u1.getName().compareTo(u2.getName());
 
-   {
-        USER_LIST.forEach(this::save);
-    }
+    public static final int USER_ID = 1;
+    public static final int ADMIN_ID = 2;
 
-    @Override
-    public boolean delete(int id) {
-        LOG.info("delete " + id);
-        return repository.remove(this.get(id));
+    {
+        save(new User(USER_ID, "User", "user@yandex.ru", "password", Role.ROLE_USER));
+        save(new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ROLE_ADMIN));
     }
 
     @Override
     public User save(User user) {
-        LOG.info("save " + user);
+        Objects.requireNonNull(user);
         if (user.isNew()) {
             user.setId(counter.incrementAndGet());
         }
-        return repository.get(user.getId());
+        return repository.put(user.getId(), user);
+    }
+
+    @Override
+    public boolean delete(int id) {
+        return repository.remove(id) != null;
     }
 
     @Override
     public User get(int id) {
-        LOG.info("get " + id);
         return repository.get(id);
     }
 
     @Override
     public List<User> getAll() {
-        LOG.info("getAll");
-        return repository;
+        return repository.values().stream().sorted(USER_COMPARATOR).collect(Collectors.toList());
     }
 
     @Override
     public User getByEmail(String email) {
-        LOG.info("getByEmail " + email);
-        repository.stream()
-                    .filter(us->us.getEmail().equals(email))
-
-
-        return
+        Objects.requireNonNull(email);
+        return repository.values().stream().filter(u -> email.equals(u.getEmail())).findFirst().orElse(null);
     }
 }
