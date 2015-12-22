@@ -9,14 +9,30 @@ import java.time.LocalDateTime;
 public class UserMeal {
     protected Integer id;
 
-    protected final LocalDateTime dateTime;
+    protected LocalDateTime dateTime;
 
-    protected final String description;
+    protected String description;
 
-    protected final int calories;
+    protected int calories;
 
     public UserMeal(LocalDateTime dateTime, String description, int calories) {
         this(null, dateTime, description, calories);
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCalories(int calories) {
+        this.calories = calories;
     }
 
     public UserMeal(Integer id, LocalDateTime dateTime, String description, int calories) {
@@ -24,11 +40,9 @@ public class UserMeal {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
+
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public LocalDateTime getDateTime() {
         return dateTime;
