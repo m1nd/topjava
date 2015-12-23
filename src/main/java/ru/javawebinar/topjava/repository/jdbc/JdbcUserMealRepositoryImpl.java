@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -12,6 +13,8 @@ import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.repository.UserMealRepository;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +29,7 @@ public class JdbcUserMealRepositoryImpl implements UserMealRepository {
 
     private static final BeanPropertyRowMapper<UserMeal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(UserMeal.class);
 
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -37,7 +41,7 @@ public class JdbcUserMealRepositoryImpl implements UserMealRepository {
     @Autowired
     public JdbcUserMealRepositoryImpl(DataSource dataSource) {
         this.insertUserMeal = new SimpleJdbcInsert(dataSource)
-                .withTableName("MEALS")
+                .withTableName("meals")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -79,7 +83,17 @@ public class JdbcUserMealRepositoryImpl implements UserMealRepository {
     @Override
     public List<UserMeal> getAll(int userId) {
 
-        return jdbcTemplate.query("SELECT * FROM meals ORDER BY datetime", ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM meals", new RowMapper<UserMeal>() {
+            @Override
+            public UserMeal mapRow(ResultSet rs, int rowNum) throws SQLException {
+                UserMeal userMeal = new UserMeal();
+                userMeal.setId(rs.getInt("id"));
+                userMeal.setDateTime(rs.getTimestamp("datetime").toLocalDateTime());
+                userMeal.setCalories(rs.getInt("calories"));
+                userMeal.setDescription(rs.getString("description"));
+                return userMeal;
+            }
+        });
     }
 
     @Override
