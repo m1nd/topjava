@@ -16,6 +16,11 @@ import java.time.LocalDateTime;
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
 public class UserMeal extends BaseEntity {
 
+    public static final String DELETE = "UserMeal.delete";
+    public static final String ALL_SORTED = "UserMeal.getAllSorted";
+    public static final String BETWEEN_DATES = "UserMeal.getBetweenDates";
+    public static final String BETWEEN_DATE_TIMES = "UserMeal.getBetweenDateTimes";
+
     @Column(name = "date_time", unique = true)
     @DateTimeFormat
     protected LocalDateTime dateTime;
