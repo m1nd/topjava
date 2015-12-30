@@ -12,6 +12,13 @@ import java.time.LocalDateTime;
  * 11.01.2015.
  */
 
+@NamedQueries({
+        @NamedQuery(name = UserMeal.DELETE, query = "DELETE FROM UserMeal m WHERE m.id=:id AND m.user=:user"),
+        @NamedQuery(name = UserMeal.BETWEEN_DATES, query = "SELECT m FROM UserMeal m LEFT JOIN FETCH m.user WHERE m.dateTime BETWEEN :startDate AND :endDate"),
+        @NamedQuery(name = UserMeal.BETWEEN_DATE_TIMES, query = "SELECT m FROM UserMeal m LEFT JOIN FETCH m.user WHERE m.dateTime BETWEEN :startDate AND :endDate"),
+        @NamedQuery(name = UserMeal.ALL_SORTED, query = "SELECT u FROM UserMeal u LEFT JOIN FETCH u.user ORDER BY u.dateTime"),
+})
+
 @Entity
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
 public class UserMeal extends BaseEntity {
@@ -34,6 +41,8 @@ public class UserMeal extends BaseEntity {
     protected int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "user_id")
+    @NotEmpty
     private User user;
 
     public UserMeal(LocalDateTime dateTime, String description, int calories) {
